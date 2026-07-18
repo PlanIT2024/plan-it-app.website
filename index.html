@@ -23,6 +23,7 @@
         <a class="nav-link active" href="index.html">Home</a>
         <a class="nav-link" href="#features">Features</a>
         <a class="nav-link" href="#how">How it works</a>
+        <a class="nav-link" href="#contact">Contact</a>
         <a class="nav-link" href="support.html">Support</a>
         <a class="nav-link" href="privacy.html">Privacy</a>
       </div>
@@ -214,6 +215,53 @@
       <a class="btn btn-primary" href="mailto:hello@planit.app?subject=Plan-IT%20access%20request">Request access →</a>
     </section>
 
+    <!-- ═══════════ CONTACT ═══════════ -->
+    <section id="contact">
+      <div class="section-eyebrow">Contact</div>
+      <h2 class="section-h">Talk to the Plan-IT team.</h2>
+      <p class="section-sub">
+        Questions, feedback, or something stuck in the app? Send a message and we’ll
+        get back within 1–2 business days.
+      </p>
+
+      <div class="contact-layout">
+        <form class="contact-form" id="contact-form" novalidate>
+          <div class="field">
+            <label for="contact-name">Name</label>
+            <input id="contact-name" name="name" type="text" autocomplete="name" required placeholder="Your name">
+          </div>
+          <div class="field">
+            <label for="contact-email">Email</label>
+            <input id="contact-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="contact-topic">Topic</label>
+            <select id="contact-topic" name="topic" required>
+              <option value="" disabled selected>Select a topic</option>
+              <option value="Support">App support</option>
+              <option value="Account">Account &amp; invite codes</option>
+              <option value="Feedback">Feedback</option>
+              <option value="Privacy">Privacy &amp; data</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="contact-message">Message</label>
+            <textarea id="contact-message" name="message" rows="5" required placeholder="How can we help?"></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Send message →</button>
+          <p class="contact-note" id="contact-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <aside class="contact-aside">
+          <h3>Prefer email?</h3>
+          <p>Write us directly and include your account email plus device details if you’re reporting a bug.</p>
+          <a class="contact-email" href="mailto:hello@planit.app">hello@planit.app</a>
+          <p class="contact-aside-meta">Typical reply time: 1–2 business days</p>
+        </aside>
+      </div>
+    </section>
+
   </main>
 
   <!-- ═══════════ FOOTER ═══════════ -->
@@ -223,11 +271,44 @@
       <div class="footer-links">
         <a href="support.html">Support</a>
         <a href="privacy.html">Privacy Policy</a>
-        <a href="mailto:hello@planit.app">Contact</a>
+        <a href="#contact">Contact</a>
       </div>
       <span class="fade">© 2026 Plan-IT. All rights reserved.</span>
     </div>
   </footer>
+
+  <script>
+    (function () {
+      var form = document.getElementById('contact-form');
+      var status = document.getElementById('contact-status');
+      if (!form) return;
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var name = form.name.value.trim();
+        var email = form.email.value.trim();
+        var topic = form.topic.value;
+        var message = form.message.value.trim();
+
+        if (!name || !email || !topic || !message) {
+          status.textContent = 'Please fill in every field before sending.';
+          return;
+        }
+
+        var subject = encodeURIComponent('Plan-IT — ' + topic + ' from ' + name);
+        var body = encodeURIComponent(
+          'Name: ' + name + '\n' +
+          'Email: ' + email + '\n' +
+          'Topic: ' + topic + '\n\n' +
+          message
+        );
+
+        status.textContent = 'Opening your email app…';
+        window.location.href = 'mailto:hello@planit.app?subject=' + subject + '&body=' + body;
+      });
+    })();
+  </script>
 
 </body>
 </html>
