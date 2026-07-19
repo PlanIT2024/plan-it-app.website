@@ -101,9 +101,11 @@ module.exports = async function handler(req, res) {
     const email = String(body.email || '').trim();
     const topic = String(body.topic || '').trim();
     const message = String(body.message || '').trim();
-    const honeypot = String(body.company || '').trim();
+    // Honeypot — never use common autofill names like "company"
+    const honeypot = String(body.website_url_hp || '').trim();
 
     if (honeypot) {
+      console.warn('Contact form honeypot triggered; dropping submission');
       return res.status(200).json({ ok: true });
     }
 
@@ -150,7 +152,7 @@ module.exports = async function handler(req, res) {
     const filename = `planit-contact-${safeName}-${Date.now()}.pdf`;
 
     const resend = new Resend(apiKey);
-    const { error } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from,
       to: [to],
       replyTo: email,
@@ -179,16 +181,23 @@ module.exports = async function handler(req, res) {
       attachments: [
         {
           filename,
-          content: pdfBuffer,
+          content: pdfBuffer.toString('base64'),
+          contentType: 'application/pdf',
         },
       ],
     });
 
     if (error) {
       console.error('Resend error:', error);
-      return res.status(500).json({ error: 'Failed to send your message. Please try again.' });
+      const domainIssue = /domain is not verified/i.test(error.message || '');
+      return res.status(500).json({
+        error: domainIssue
+          ? 'Email domain is not verified in Resend yet. Please verify planitapp.app at resend.com/domains.'
+          : 'Failed to send your message. Please try again.',
+      });
     }
 
+    console.log('Contact email sent', { id: data && data.id, to, from });
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error('Contact form error:', err);

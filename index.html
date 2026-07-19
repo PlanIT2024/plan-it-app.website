@@ -227,8 +227,8 @@
       <div class="contact-layout">
         <form class="contact-form" id="contact-form" novalidate>
           <div class="field hp" aria-hidden="true">
-            <label for="contact-company">Company</label>
-            <input id="contact-company" name="company" type="text" tabindex="-1" autocomplete="off">
+            <label for="contact-website-hp">Website</label>
+            <input id="contact-website-hp" name="website_url_hp" type="text" tabindex="-1" autocomplete="off" value="">
           </div>
           <div class="field">
             <label for="contact-name">Name</label>
@@ -295,7 +295,7 @@
         var email = form.email.value.trim();
         var topic = form.topic.value;
         var message = form.message.value.trim();
-        var company = form.company.value.trim();
+        var honeypot = form.website_url_hp.value.trim();
 
         if (!name || !email || !topic || !message) {
           status.textContent = 'Please fill in every field before sending.';
@@ -309,7 +309,13 @@
           var response = await fetch('/api/contact', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: name, email: email, topic: topic, message: message, company: company }),
+            body: JSON.stringify({
+              name: name,
+              email: email,
+              topic: topic,
+              message: message,
+              website_url_hp: honeypot,
+            }),
           });
           var data = {};
           try { data = await response.json(); } catch (_) {}
